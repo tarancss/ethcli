@@ -417,7 +417,6 @@ linters:
     - depguard
     - dogsled
     - dupl
-    - exhaustivestruct
     - funlen
     - gci
     - gochecknoglobals
@@ -452,6 +451,7 @@ linters:
     - wrapcheck
     - wsl
   disable:
+    # - exhaustivestruct
     # - misspell
     # - prealloc
   disable-all: false

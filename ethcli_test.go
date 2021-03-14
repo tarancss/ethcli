@@ -426,7 +426,7 @@ func TestGet(t *testing.T) {
 	}
 
 	expected := []*Trx{
-		&Trx{
+		{
 			Hash:   "0x3f3f895f532d7aab86a0a25f6df799f673d35e27dd48ecb73c76e824fb63d302",
 			From:   "0xcba75f167b03e34b8a572c50273c082401b073ed",
 			To:     "0x357dd3856d856197c1a000bbab4abcb97dfc92c4",
@@ -440,7 +440,7 @@ func TestGet(t *testing.T) {
 			Gas:    GasTransferEther,
 			Fee:    210000000000,
 		},
-		&Trx{
+		{
 			Hash:   "0x9626a3677e30331fc29a6e24d4e2c1693cd287c3588031ca43e18a27cedf3a6d",
 			To:     "0x357dd3856d856197c1a000bbab4abcb97dfc92c4",
 			From:   "0xcba75f167b03e34b8a572c50273c082401b073ed",

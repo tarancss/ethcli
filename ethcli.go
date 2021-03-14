@@ -41,8 +41,8 @@ const (
 
 //nolint:gochecknoglobals // slice representation of above
 var (
-	ERC20transfer256B  = []byte{0xa9, 0x05, 0x9c, 0xbb}
-	ERC20transferFromB = []byte{0xa9, 0x78, 0x50, 0x1e}
+	erc20transfer256B  = []byte{0xa9, 0x05, 0x9c, 0xbb}
+	erc20transferFromB = []byte{0xa9, 0x78, 0x50, 0x1e}
 )
 
 const (
@@ -326,8 +326,7 @@ func (c *EthCli) GetTokenDecimals(token string) (dec uint64, err error) {
 // token: address of the contract that defines the token. It must be ERC20 compliant
 // Executes:
 //  curl -X POST --data '{"jsonrpc":"2.0","method":"eth_call","params":[{"to":"0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f","data":"0x06fdde03"},"latest"],"id":4}' http://localhost:8545
-//nolint:dupl // similar code to other token function
-func (c *EthCli) GetTokenName(token string) (string, error) {
+func (c *EthCli) GetTokenName(token string) (string, error) { //nolint:dupl // similar code to other token function
 	if token == "" {
 		return "Ether", nil
 	}
@@ -371,8 +370,7 @@ func (c *EthCli) GetTokenName(token string) (string, error) {
 // token: address of the contract that defines the token. It must be ERC20 compliant
 // Executes:
 //  curl -X POST --data '{"jsonrpc":"2.0","method":"eth_call","params":[{"to":"0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f","data":"0x95d89b41"},"latest"],"id":4}' http://localhost:8545
-//nolint:dupl // similar code to other token function
-func (c *EthCli) GetTokenSymbol(token string) (sym string, err error) {
+func (c *EthCli) GetTokenSymbol(token string) (sym string, err error) { //nolint:dupl // similar code to other token function
 	if token == "" {
 		return "ETH", nil
 	}
@@ -673,7 +671,7 @@ func (c *EthCli) DecodeGetTransactionResponse(hash string,
 	}
 
 	// if data[0:4]=methodId, get token from "to" address
-	if len(data) >= 4 && (bytes.Equal(data[0:4], ERC20transfer256B) || bytes.Equal(data[0:4], ERC20transferFromB)) {
+	if len(data) >= 4 && (bytes.Equal(data[0:4], erc20transfer256B) || bytes.Equal(data[0:4], erc20transferFromB)) {
 		token, to, from, amount, err := decodeTokenTransfer(response, data) //nolint:govet // redeclare err
 		if err != nil {
 			return 0, 0, nil, nil, "", "", "", err
@@ -707,7 +705,7 @@ func decodeTokenTransfer(response map[string]interface{}, data []byte) (token []
 		to = "0x" + hex.EncodeToString(data[16:36])
 	}
 
-	if bytes.Equal(data[0:4], ERC20transferFromB) {
+	if bytes.Equal(data[0:4], erc20transferFromB) {
 		// transferFrom method, get from address first, then amount (without any leading zero)
 		if len(data) == 68+32 {
 			from = "0x" + hex.EncodeToString(data[36+12:36+32])
