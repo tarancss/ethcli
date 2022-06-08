@@ -78,7 +78,7 @@ var (
 //nolint:gochecknoglobals // Refer to go-ethereum/params/config.go for this variables
 // Ropsten configuration variables used to generate transactions.
 var (
-	ropstenConfig *params.ChainConfig = params.TestnetChainConfig
+	ropstenConfig *params.ChainConfig = params.RopstenChainConfig
 
 	//nolint:gomnd // this is the latest block in ropsten as of 2018/03/02 19:56
 	ropstenBlock *big.Int = big.NewInt(2756944)
