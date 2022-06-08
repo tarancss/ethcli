@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"math/big"
 	"net/http"
 	"net/http/httptest"
@@ -12,15 +13,33 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/kelseyhightower/envconfig"
 	"github.com/stretchr/testify/require"
 )
 
-//nolint:gochecknoglobals // used by all the tests
-var (
-	nodeURL    string = "" // write the url of your node here!! If left empty, the test uses a mock HTTP JSONRPC2.0 server to provide responses from slice "expected".
-	nodeSecret string = "" // ie. for Infura v3 node, use ":<your secret here>"
+type nodeConfig struct {
+	URL    string `envconfig:"ETHCLI_NODE_URL"`    // if empty, the test uses a mock HTTP JSONRPC2.0 server to provide responses from slice "expected".
+	Secret string `envconfig:"ETHCLI_NODE_SECRET"` // ie. for Infura v3 node, use ":<secret>".
+}
 
-	mock *[]interface{} // used for mock http server
+func getNodeConfig() (*nodeConfig, error) {
+	c := &nodeConfig{}
+	err := envconfig.Process("ETHCLI", c)
+	if err != nil {
+		return nil, err
+	}
+
+	if c.URL == "" {
+		c.URL = mockURL
+	}
+
+	return c, nil
+}
+
+//nolint:gochecknoglobals // used for mock http server
+var (
+	mock    *[]interface{}
+	mockURL string
 )
 
 // type mockRequest for JSONRPC 2.0.
@@ -83,22 +102,38 @@ func TestMain(m *testing.M) {
 		res.Result = (*mock)[n]
 	})
 
-	// start a mock node server if nodeURL is not defined
-	if nodeURL == "" {
+	cfg, err := getNodeConfig()
+	if err != nil {
+		log.Fatalf("error loading config: %s", err)
+	}
+
+	// start a mock node server if node URL is not defined
+	if cfg.URL == "" {
 		mock := httptest.NewServer(handler)
-		nodeURL = mock.URL
-		println("Warning: running tests against mock node in:", nodeURL)
+		mockURL = mock.URL
+		println("Warning: running tests against mock node in:", mockURL)
 	}
 
 	os.Exit(m.Run())
 }
 
-func TestJSONRPCCalls(t *testing.T) {
-	// connect to ethereum node
-	c := Init(nodeURL, nodeSecret)
-	if c == nil {
-		t.Fatalf("error connecting to: %s", nodeURL)
+func connectToEthereum() (*EthCli, error) {
+	cfg, err := getNodeConfig()
+	if err != nil {
+		return nil, err
 	}
+
+	c := Init(cfg.URL, cfg.Secret)
+	if c == nil {
+		return nil, fmt.Errorf("error connecting to: %s", cfg.URL)
+	}
+
+	return c, nil
+}
+
+func TestJSONRPCCalls(t *testing.T) {
+	c, err := connectToEthereum()
+	require.NoError(t, err)
 
 	defer c.End()
 
@@ -109,21 +144,21 @@ func TestJSONRPCCalls(t *testing.T) {
 		map[string]interface{}{"difficulty": "0x7ee56684", "extraData": "0x414952412f7630", "gasLimit": "0x47b784", "gasUsed": "0x47addd", "hash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "logsBloom": "0x0000000001400004002008000002000080000000000120200120002400208220000040000001000000000004804800000104000000000c0000000008201000005000200000010000140000084000000000000000100010400000080000040080100082000000000000000000004000021000800400802000000000501000000200000400000200020040010040000010105000000000040120000008000800200801000008004000000400004040000100000000000400000d005000020000008000004280010000000000000000000020010180100000140000000000020000000000000000008008000000000040000040100004001002c040000000000000", "miner": "0x00d8ae40d9a06d0e7a2877b62e32eb959afbe16d", "mixHash": "0xd93c06ec00e2c653b7958114ba8224aad8749caf8de6aee2c2f465c5f09cc0cc", "nonce": "0x34b98c94071402d8", "number": "0x29bf9b", "parentHash": "0x25e2e6cfc2f49ef320c652d91a7bea99a2d115d29ea832631e5f11911a463158", "receiptsRoot": "0x0506189cdc814f4440690b43aaf7cf278a9b346b8ef3174c03dde2d23aa820ea", "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347", "size": "0x299a", "stateRoot": "0xf8be81979f9a92cd123f8e6295dca2660184df4f58e275c6c9fe7adee0016e7c", "timestamp": "0x5a952da9", "totalDifficulty": "0x1bd6b7e3c7b473", "transactions": []map[string]interface{}{{"blockHash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "blockNumber": "0x29bf9b", "from": "0xc4581843a8dacd100c7d435bb00b2a20d038e31d", "gas": "0x47b760", "gasPrice": "0x174876e800", "hash": "0xc39f3c2c2b5c0a772e8605bbeef7d341937b85e739a3c55d1e7384ac88f31c65", "input": "0x4bdb8ab50804004410241002040000c60890801000000000000000000000000000000000", "nonce": "0x46", "r": "0xdd38a14e41b886d156a1073cc7ae914f4ee70d282925652b366bf953311d5862", "s": "0x4ecacbcef27ca7ebb7f8f628036a555f934a124063869fa8ba256ef7731218cf", "to": "0x7762440182222620a7435195208038708d27ee41", "transactionIndex": "0x0", "v": "0x1c", "value": "0x0"}, {"blockHash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "blockNumber": "0x29bf9b", "from": "0x1cd434711fbae1f2d9c70001409fd82d71fdccaa", "gas": "0xff59", "gasPrice": "0x98bca5a00", "hash": "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60", "input": "0x", "nonce": "0x0", "r": "0xb506e6cf81364d01c126028ec0acb771ca372269c8b157e551238a1e2d1b7ecb", "s": "0x2d7ea699220630938f57fe05fa581abd5a21f3aa105668a7128fba49598bbd70", "to": "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f", "transactionIndex": "0x1", "v": "0x29", "value": "0x16345785d8a0000"}}, "transactionsRoot": "0x08e95959ada5ebbe3aae1a4b9179f811c326c0969b7a5fea75b4e427c2870f96", "uncles": []string{}},
 	}
 
-	expectedVersion := "Geth/v1.9.24-omnibus-47105919/linux-amd64/go1.15.5"
+	expectedVersionPrefix := "Geth"
 	expectedBlock := []string{"0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "0x0000000001400004002008000002000080000000000120200120002400208220000040000001000000000004804800000104000000000c0000000008201000005000200000010000140000084000000000000000100010400000080000040080100082000000000000000000004000021000800400802000000000501000000200000400000200020040010040000010105000000000040120000008000800200801000008004000000400004040000100000000000400000d005000020000008000004280010000000000000000000020010180100000140000000000020000000000000000008008000000000040000040100004001002c040000000000000"}
 
 	// test a direct jsonrpc call using EthCli
 	var res string
 
-	err := c.Call("web3_clientVersion", []string{}, &res)
-	require.NoError(t, err, "in Call to %s: %s", nodeURL, err)
-	require.Equal(t, expectedVersion, res)
+	err = c.Call("web3_clientVersion", []string{}, &res)
+	require.NoError(t, err)
+	require.Contains(t, res, expectedVersionPrefix)
 
 	// test get block by Hash direct call
 	var response map[string]interface{}
 
 	err = c.Call("eth_getBlockByHash", []interface{}{"0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", true}, &response)
-	require.NoError(t, err, "error in Call to %s: %s", nodeURL, err)
+	require.NoError(t, err)
 	require.NotNil(t, response, "eth_getBlockByHash: block not found")
 	require.Equal(t, expectedBlock[0], response["hash"])
 	require.Equal(t, expectedBlock[1], response["logsBloom"])
@@ -132,11 +167,8 @@ func TestJSONRPCCalls(t *testing.T) {
 // TestGetGasAndGetLatestBlock tests the methods GasPrice and GetLatestBlock. This test is better run against the mock server
 // as a real node will return the values for the given time the test is run.
 func TestGetGasAndGetLatestBlock(t *testing.T) {
-	// connect to ethereum node
-	c := Init(nodeURL, nodeSecret)
-	if c == nil {
-		t.Fatalf("error connecting to: %s", nodeURL)
-	}
+	c, err := connectToEthereum()
+	require.NoError(t, err)
 
 	defer c.End()
 
@@ -153,21 +185,18 @@ func TestGetGasAndGetLatestBlock(t *testing.T) {
 
 	// get gasPrice
 	num, err := c.GasPrice()
-	require.NoError(t, err, "in Call to %s: %s", nodeURL, err)
-	require.Equal(t, expected[0], num, "INFO: GasPrice test may fail if tested against real ethereum node")
+	require.NoError(t, err)
+	require.GreaterOrEqual(t, num, expected[0])
 
 	// test GetLatestBlock
 	num, err = c.GetLatestBlock()
-	require.NoError(t, err, "in Call to %s: %s", nodeURL, err)
-	require.Equal(t, expected[1], num, "INFO: GetLatsetBlock test may fail if tested against real ethereum node")
+	require.NoError(t, err)
+	require.GreaterOrEqual(t, num, expected[1])
 }
 
 func TestBalance(t *testing.T) {
-	// connect to ethereum node
-	c := Init(nodeURL, nodeSecret)
-	if c == nil {
-		t.Fatalf("error connecting to: %s", nodeURL)
-	}
+	c, err := connectToEthereum()
+	require.NoError(t, err)
 
 	defer c.End()
 
@@ -213,11 +242,8 @@ func TestBalance(t *testing.T) {
 }
 
 func TestNonceAndEstimageGas(t *testing.T) {
-	// connect to ethereum node
-	c := Init(nodeURL, nodeSecret)
-	if c == nil {
-		t.Fatalf("error connecting to: %s", nodeURL)
-	}
+	c, err := connectToEthereum()
+	require.NoError(t, err)
 
 	defer c.End()
 
@@ -265,11 +291,8 @@ func TestNonceAndEstimageGas(t *testing.T) {
 }
 
 func TestTransactions(t *testing.T) {
-	// connect to ethereum node
-	c := Init(nodeURL, nodeSecret)
-	if c == nil {
-		t.Fatalf("error connecting to: %s", nodeURL)
-	}
+	c, err := connectToEthereum()
+	require.NoError(t, err)
 
 	defer c.End()
 
@@ -295,7 +318,7 @@ func TestTransactions(t *testing.T) {
 	)
 
 	// get tx by Hash
-	err := c.GetTransactionByHash(hash, &response)
+	err = c.GetTransactionByHash(hash, &response)
 	require.NoError(t, err)
 	require.NotNil(t, response)
 	require.Equal(t, expected[0].(string), response["hash"]) // we could compare other fields too...
@@ -315,11 +338,8 @@ func TestTransactions(t *testing.T) {
 }
 
 func TestTokens(t *testing.T) {
-	// connect to ethereum node
-	c := Init(nodeURL, nodeSecret)
-	if c == nil {
-		t.Fatalf("error connecting to: %s", nodeURL)
-	}
+	c, err := connectToEthereum()
+	require.NoError(t, err)
 
 	defer c.End()
 
@@ -359,7 +379,7 @@ func TestTokens(t *testing.T) {
 
 	badToken := "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732e"
 
-	_, err := c.GetTokenName(badToken)
+	_, err = c.GetTokenName(badToken)
 	require.Error(t, err)
 	require.Equal(t, ErrNoToken, err)
 
@@ -373,11 +393,8 @@ func TestTokens(t *testing.T) {
 }
 
 func TestTokenGas(t *testing.T) {
-	// connect to ethereum node
-	c := Init(nodeURL, nodeSecret)
-	if c == nil {
-		t.Fatalf("error connecting to: %s", nodeURL)
-	}
+	c, err := connectToEthereum()
+	require.NoError(t, err)
 
 	defer c.End()
 
@@ -395,7 +412,7 @@ func TestTokenGas(t *testing.T) {
 	tmp = append(tmp, tmpAmt...) // transfer of 0x2a5f (10847)
 
 	gas, err := c.EstimateGas(token, "0x00", "0x"+hex.EncodeToString(tmp))
-	require.NoError(t, err, "in Call to %s: %s", nodeURL, err)
+	require.NoError(t, err)
 
 	if gas != GasTransferToken {
 		t.Errorf("Got wrong gas %d (expected %d)\n", gas, GasTransferToken)
@@ -404,11 +421,8 @@ func TestTokenGas(t *testing.T) {
 
 //nolint:funlen // mock data is long
 func TestGet(t *testing.T) {
-	// connect to ethereum node
-	c := Init(nodeURL, nodeSecret)
-	if c == nil {
-		t.Fatalf("error connecting to: %s", nodeURL)
-	}
+	c, err := connectToEthereum()
+	require.NoError(t, err)
 
 	defer c.End()
 
