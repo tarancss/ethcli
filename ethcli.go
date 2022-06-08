@@ -79,9 +79,7 @@ var (
 // Ropsten configuration variables used to generate transactions.
 var (
 	ropstenConfig *params.ChainConfig = params.RopstenChainConfig
-
-	//nolint:gomnd // this is the latest block in ropsten as of 2018/03/02 19:56
-	ropstenBlock *big.Int = big.NewInt(2756944)
+	ropstenBlock  *big.Int            = params.RopstenChainConfig.LondonBlock
 )
 
 // Trx is an ethereum transaction.
