@@ -24,6 +24,7 @@ type nodeConfig struct {
 
 func getNodeConfig() (*nodeConfig, error) {
 	c := &nodeConfig{}
+
 	err := envconfig.Process("ETHCLI", c)
 	if err != nil {
 		return nil, err
@@ -74,8 +75,11 @@ func TestMain(m *testing.M) {
 			}
 		}()
 		// read request body
-		var body []byte = make([]byte, int(r.ContentLength))
-		var n int
+		var (
+			body = make([]byte, int(r.ContentLength))
+			n    int
+		)
+
 		n, err = r.Body.Read(body)
 		if err != nil && (err != io.EOF || n != int(r.ContentLength)) { //nolint:errorlint // io.EOF is not wrapped
 			res.Error = fmt.Errorf("[Mock server] n:%d error:%w", n, err)
@@ -125,7 +129,7 @@ func connectToEthereum() (*EthCli, error) {
 
 	c := Init(cfg.URL, cfg.Secret)
 	if c == nil {
-		return nil, fmt.Errorf("error connecting to: %s", cfg.URL)
+		return nil, fmt.Errorf("error connecting to: %s", cfg.URL) //nolint:goerr113 // test error.
 	}
 
 	return c, nil
@@ -209,25 +213,26 @@ func TestBalance(t *testing.T) {
 		"0x7f97f7fed9f3ca5", "0x0000000000000000000000000000000000000000000000002a902c40161f8000",
 	}
 
-	var expected []interface{} = []interface{}{
-		// TestBalance acc[0]
-		"0xa1647084afb7c780", "0x00000000000000000000000000000000000000000000000002830a8a80588000",
-		// TestBalance acc[1]
-		"0x166c761c586733c0", "0x0000000000000000000000000000000000000000000000000a6c168562518000",
-		// TestBalance acc[2]
-		"0x7f97f7fed9f3ca5", "0x0000000000000000000000000000000000000000000000002a902c40161f8000",
-	}
+	var (
+		expected = []interface{}{
+			// TestBalance acc[0]
+			"0xa1647084afb7c780", "0x00000000000000000000000000000000000000000000000002830a8a80588000",
+			// TestBalance acc[1]
+			"0x166c761c586733c0", "0x0000000000000000000000000000000000000000000000000a6c168562518000",
+			// TestBalance acc[2]
+			"0x7f97f7fed9f3ca5", "0x0000000000000000000000000000000000000000000000002a902c40161f8000",
+		}
 
-	// Test balances: request the ether and ERC token balances for 3 addresses and compare to that of expected.
-	var acc []string = []string{
-		"0xcba75F167B03e34B8a572c50273C082401b073Ed",
-		"0x357dd3856d856197c1a000bbAb4aBCB97Dfc92c4",
-		"0x1CD434711fBAe1f2d9C70001409Fd82d71fDCCAa",
-	}
+		// Test balances: request the ether and ERC token balances for 3 addresses and compare to that of expected.
+		acc = []string{
+			"0xcba75F167B03e34B8a572c50273C082401b073Ed",
+			"0x357dd3856d856197c1a000bbAb4aBCB97Dfc92c4",
+			"0x1CD434711fBAe1f2d9C70001409Fd82d71fDCCAa",
+		}
 
-	var tok string = "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f" // ERC20 token
-
-	var ethExp, tokExp *big.Int = new(big.Int), new(big.Int)
+		tok            = "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f" // ERC20 token
+		ethExp, tokExp = new(big.Int), new(big.Int)
+	)
 
 	for i := 0; i < 3; i++ {
 		ethBal, tokBal, err := c.GetBalance(acc[i], tok)
@@ -256,16 +261,17 @@ func TestNonceAndEstimageGas(t *testing.T) {
 		"21128",
 	}
 
-	var expected []interface{} = []interface{}{
-		// test transaction count
-		"0x1c",
-		"0x1c",
-		// EstimateGas
-		GasTransferEther,
-		uint64(21128),
-	}
-
-	var acc string = "0x357dd3856d856197c1a000bbAb4aBCB97Dfc92c4"
+	var (
+		acc      = "0x357dd3856d856197c1a000bbAb4aBCB97Dfc92c4"
+		expected = []interface{}{
+			// test transaction count
+			"0x1c",
+			"0x1c",
+			// EstimateGas
+			GasTransferEther,
+			uint64(21128),
+		}
+	)
 
 	// test nonce using GetTransactionCount
 	numExp, _ := strconv.ParseUint(expected[0].(string), 0, 64)
@@ -304,16 +310,16 @@ func TestTransactions(t *testing.T) {
 		map[string]interface{}(nil),
 	}
 
-	var expected []interface{} = []interface{}{
-		// GetTransactionByHash
-		"0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60",
-		// GetTransactionReceipt
-		"0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60",
-		nil, // map[string]interface{}(nil),
-	}
-
 	var (
-		hash     string = "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60"
+		expected = []interface{}{
+			// GetTransactionByHash
+			"0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60",
+			// GetTransactionReceipt
+			"0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60",
+			nil, // map[string]interface{}(nil),
+		}
+
+		hash     = "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60"
 		response map[string]interface{}
 	)
 
@@ -353,27 +359,29 @@ func TestTokens(t *testing.T) {
 		"0x", "0x", "0x",
 	}
 
-	var expected []interface{} = []interface{}{
-		"Ether", "ETH", uint64(0), // GetToken for no token - server is not getting request for these, so we ignore them
-		"vikastestcoin", "VTCN", uint64(10), // GetToken for VTCN
-	}
+	var (
+		expected = []interface{}{
+			"Ether", "ETH", uint64(0), // GetToken for no token - server is not getting request for these, so we ignore them
+			"vikastestcoin", "VTCN", uint64(10), // GetToken for VTCN
+		}
 
-	token := []string{
-		"", // test ether
-		"0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f", // Test a real token address!!
-	}
+		token = []string{
+			"", // test ether
+			"0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f", // Test a real token address!!
+		}
+	)
 
 	for i := 0; i < len(token); i++ {
-		res, err := c.GetTokenName(token[i])
-		require.NoError(t, err)
+		res, errGet := c.GetTokenName(token[i])
+		require.NoError(t, errGet)
 		require.Equal(t, expected[i*3].(string), res)
 
-		res, err = c.GetTokenSymbol(token[i])
-		require.NoError(t, err)
+		res, errGet = c.GetTokenSymbol(token[i])
+		require.NoError(t, errGet)
 		require.Equal(t, expected[i*3+1].(string), res)
 
-		num, err := c.GetTokenIcoOffer(token[i])
-		require.NoError(t, err)
+		num, errGet := c.GetTokenIcoOffer(token[i])
+		require.NoError(t, errGet)
 		require.Equal(t, expected[i*3+2].(uint64), num)
 	}
 
@@ -419,7 +427,6 @@ func TestTokenGas(t *testing.T) {
 	}
 }
 
-//nolint:funlen // mock data is long
 func TestGet(t *testing.T) {
 	c, err := connectToEthereum()
 	require.NoError(t, err)

@@ -433,7 +433,7 @@ linters:
     - goheader
     - goimports
     # - golint    # replaced by stylecheck
-    - gomnd
+    # - gomnd
     - govet
     - interfacer
     # - lll       # code contains long lines with strings
@@ -448,7 +448,7 @@ linters:
     - stylecheck
     - unconvert
     - whitespace
-    - wrapcheck
+    # - wrapcheck
     - wsl
   disable:
     # - exhaustivestruct

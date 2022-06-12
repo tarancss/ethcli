@@ -199,7 +199,7 @@ func (c *EthCli) EstimateGas(to, value, data string) (gas uint64, err error) {
 	// geth nodes have problems unmarshaling values with leading zeroes (ie. 0x04fc), so we remove them. Parity does not have this problem
 	var response interface{}
 
-	var tmp string = ""
+	tmp := ""
 
 	if len(value) > 2 {
 		tmp = "0x" + strings.TrimLeft(value[2:], "0")
@@ -437,8 +437,8 @@ func (c *EthCli) GetTokenIcoOffer(token string) (ico uint64, err error) {
 // If sending an ERC20 token, the argument token must be a valid 20-byte address and data empty.
 // If priceRequested is 0, a suggested gas price will be sought from the blockchain.
 // Use dryRun = true for testing (it will not send the transaction to the blockchain but still provide a valid hash).
-func (c *EthCli) SendTrx(fromAddress, toAddress, token, amount string, data []byte, key string, priceRequested uint64,
-	dryRun bool) (uint64, uint64, []byte, error) {
+func (c *EthCli) SendTrx(fromAddress, toAddress, token, amount string, data []byte, key string, priceRequested uint64, dryRun bool,
+) (uint64, uint64, []byte, error) {
 	if err := validateSendTrx(fromAddress, toAddress, token, amount, key, data); err != nil {
 		return 0, 0, nil, err
 	}
@@ -453,14 +453,24 @@ func (c *EthCli) SendTrx(fromAddress, toAddress, token, amount string, data []by
 		return 0, 0, nil, err
 	}
 
+	fmt.Printf("to:%v, amt:%v, dataEther:%v, dataToken:%v\n", to, amt, dataEther, dataToken)
+
 	gasLimit, priceSet, gasPrice, err := c.getGasLimitAndPrice(priceRequested, token, toAddress, amount, dataEther,
 		dataToken)
 	if err != nil {
 		return 0, 0, nil, err
 	}
 
+	var dataToSend []byte
+
+	if token == "" {
+		dataToSend = dataEther
+	} else {
+		dataToSend = dataToken
+	}
+
 	// generate transaction, get hash and raw signed transaction
-	hash, raw, err := signTrx(nonce, to, amt, gasLimit, gasPrice, data, key)
+	hash, raw, err := signTrx(nonce, to, amt, gasLimit, gasPrice, dataToSend, key)
 	if err != nil {
 		return 0, 0, nil, err
 	}
@@ -541,7 +551,8 @@ func getToAmountAndData(toAddress, token, amount string, data []byte) (to common
 }
 
 func (c *EthCli) getGasLimitAndPrice(priceRequested uint64, token, toAddress, amount string,
-	data, tmp []byte) (gasLimit, priceSet uint64, gasPrice *big.Int, err error) {
+	data, tmp []byte,
+) (gasLimit, priceSet uint64, gasPrice *big.Int, err error) {
 	if priceRequested == 0 {
 		if priceSet, err = c.GasPrice(); err != nil {
 			return
@@ -600,7 +611,7 @@ func (c *EthCli) GetTrx(hash string) (*Trx, error) {
 		return nil, err
 	}
 
-	var t *Trx = &Trx{}
+	t := &Trx{}
 
 	t.Blk, t.Price, t.Data, t.Token, t.To, t.From, t.Amount, err = c.DecodeGetTransactionResponse(hash, response)
 	if err != nil {
@@ -634,8 +645,9 @@ func decodeBlockNumber(response map[string]interface{}) (uint64, error) {
 
 // DecodeGetTransactionResponse returns the block number, gas price and data of the transaction.
 // If the transaction has not been mined block number is 0.
-func (c *EthCli) DecodeGetTransactionResponse(hash string,
-	response map[string]interface{}) (uint64, uint64, []byte, []byte, string, string, string, error) {
+func (c *EthCli) DecodeGetTransactionResponse(
+	hash string, response map[string]interface{},
+) (uint64, uint64, []byte, []byte, string, string, string, error) {
 	// check hash
 	if tmp, ok := response["hash"].(string); !ok || hash != tmp {
 		return 0, 0, nil, nil, "", "", "", ErrWrongHash
@@ -686,8 +698,7 @@ func (c *EthCli) DecodeGetTransactionResponse(hash string,
 	return blk, price, data, nil, to, from, amount, nil
 }
 
-func decodeTokenTransfer(response map[string]interface{}, data []byte) (token []byte, to, from, amount string,
-	err error) {
+func decodeTokenTransfer(response map[string]interface{}, data []byte) (token []byte, to, from, amount string, err error) {
 	tmp, ok := response["to"].(string)
 	if !ok {
 		return nil, "", "", "", ErrInvalidTrxData
