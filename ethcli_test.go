@@ -143,13 +143,33 @@ func TestJSONRPCCalls(t *testing.T) {
 
 	mock = &[]interface{}{
 		// clientVersion
-		"Geth/v1.9.24-omnibus-47105919/linux-amd64/go1.15.5",
-		// getBlockbyHash (omitted all but 2 transactions)
-		map[string]interface{}{"difficulty": "0x7ee56684", "extraData": "0x414952412f7630", "gasLimit": "0x47b784", "gasUsed": "0x47addd", "hash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "logsBloom": "0x0000000001400004002008000002000080000000000120200120002400208220000040000001000000000004804800000104000000000c0000000008201000005000200000010000140000084000000000000000100010400000080000040080100082000000000000000000004000021000800400802000000000501000000200000400000200020040010040000010105000000000040120000008000800200801000008004000000400004040000100000000000400000d005000020000008000004280010000000000000000000020010180100000140000000000020000000000000000008008000000000040000040100004001002c040000000000000", "miner": "0x00d8ae40d9a06d0e7a2877b62e32eb959afbe16d", "mixHash": "0xd93c06ec00e2c653b7958114ba8224aad8749caf8de6aee2c2f465c5f09cc0cc", "nonce": "0x34b98c94071402d8", "number": "0x29bf9b", "parentHash": "0x25e2e6cfc2f49ef320c652d91a7bea99a2d115d29ea832631e5f11911a463158", "receiptsRoot": "0x0506189cdc814f4440690b43aaf7cf278a9b346b8ef3174c03dde2d23aa820ea", "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347", "size": "0x299a", "stateRoot": "0xf8be81979f9a92cd123f8e6295dca2660184df4f58e275c6c9fe7adee0016e7c", "timestamp": "0x5a952da9", "totalDifficulty": "0x1bd6b7e3c7b473", "transactions": []map[string]interface{}{{"blockHash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "blockNumber": "0x29bf9b", "from": "0xc4581843a8dacd100c7d435bb00b2a20d038e31d", "gas": "0x47b760", "gasPrice": "0x174876e800", "hash": "0xc39f3c2c2b5c0a772e8605bbeef7d341937b85e739a3c55d1e7384ac88f31c65", "input": "0x4bdb8ab50804004410241002040000c60890801000000000000000000000000000000000", "nonce": "0x46", "r": "0xdd38a14e41b886d156a1073cc7ae914f4ee70d282925652b366bf953311d5862", "s": "0x4ecacbcef27ca7ebb7f8f628036a555f934a124063869fa8ba256ef7731218cf", "to": "0x7762440182222620a7435195208038708d27ee41", "transactionIndex": "0x0", "v": "0x1c", "value": "0x0"}, {"blockHash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "blockNumber": "0x29bf9b", "from": "0x1cd434711fbae1f2d9c70001409fd82d71fdccaa", "gas": "0xff59", "gasPrice": "0x98bca5a00", "hash": "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60", "input": "0x", "nonce": "0x0", "r": "0xb506e6cf81364d01c126028ec0acb771ca372269c8b157e551238a1e2d1b7ecb", "s": "0x2d7ea699220630938f57fe05fa581abd5a21f3aa105668a7128fba49598bbd70", "to": "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f", "transactionIndex": "0x1", "v": "0x29", "value": "0x16345785d8a0000"}}, "transactionsRoot": "0x08e95959ada5ebbe3aae1a4b9179f811c326c0969b7a5fea75b4e427c2870f96", "uncles": []string{}},
+		"Geth/v1.11.4-omnibus-8c089133/linux-amd64/go1.19.7",
+		// getBlockbyHash (omitted all but 1 transaction)
+		map[string]interface{}{
+			"difficulty": "0x0",
+			"extraData":  "0xd883010b04846765746888676f312e32302e32856c696e7578",
+			"gasLimit":   "0x1c9c380", "gasUsed": "0x6cc526",
+			"hash":      "0xb20319b3d93034bafa8bfda3616691e3f1e347e1d2360733a321c26909270496",
+			"logsBloom": "0x006c008000a400481019089084800921420800043d410810114c20009821581102a20000810700812412a0005064008c02041840034452b11282120d80b6a1020a0050049c3020404800010a028012e0204d00008c4c150000788ba0c0808000a00422000222024040201c800810090000c000a024304591a1800819c0014058180201000880204228000000a29000824000080b0c16062c00000041558201802209108005020018080824907400031404040233a894030080d2605539204203c4304862000002080052101000abd414800010000008001e4049418248006082001031880022ac403002014062001806801004520998c2c2010228080a080001",
+			"miner":     "0xc6e2459991bfe27cca6d86722f35da23a1e4cb97",
+			"mixHash":   "0x5b078b9f78fb4bc3095d78f8eee2836e854532f1bda1173a537bd0332d9c8d48",
+			"nonce":     "0x0000000000000000", "number": "0x84552a",
+			"parentHash":   "0xdea6834254ad6d12c0e970b66da9b4d944b8bc24170c69213dca54cb074f28c7",
+			"receiptsRoot": "0x6f7151a9dccc9af76a9296a0bf834f75d520bd80452c32a8e483f4d61eff0e7c",
+			"sha3Uncles":   "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+			"size":         "0x10227", "stateRoot": "0xb7a70da82f4c9ca9d2bcf0b98f798d2b9b0716e65acb908599099cb10bd431ad",
+			"timestamp": "0x6414db18", "totalDifficulty": "0xa4a470",
+			"transactions": []map[string]interface{}{
+				{"blockHash": "0xb20319b3d93034bafa8bfda3616691e3f1e347e1d2360733a321c26909270496", "blockNumber": "0x84552a", "chainId": "0x5", "from": "0x1b7aa44088a0ea95bdc65fef6e5071e946bf7d8f", "gas": "0x5208", "gasPrice": "0x174876e800", "hash": "0xe5a071e84c0278f0ae3466bc4d9559de17b633255b8f368bb99270424ff06866", "input": "0x", "nonce": "0x29f7a", "r": "0x7ac2c88f2bc9f93b75e51ecea6188ad63c2bc8c0944028790236bb78a2b1dae", "s": "0x523f544e4388de90dd3ad13d74ee6511b4102178371df7a6eba37f78b80925ff", "to": "0xdd04e587427506ebbc67e0ae9f6d2c69c132b29a", "transactionIndex": "0x0", "type": "0x0", "v": "0x2d", "value": "0x3782dace9d90000"},
+			},
+			"transactionsRoot": "0xea55d940e7a60656e7c660795bba71d3456c612746957ec41e2693584e70b4bd",
+			"uncles":           []string{},
+		},
 	}
 
+	hash := "0xb20319b3d93034bafa8bfda3616691e3f1e347e1d2360733a321c26909270496"
 	expectedVersionPrefix := "Geth"
-	expectedBlock := []string{"0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "0x0000000001400004002008000002000080000000000120200120002400208220000040000001000000000004804800000104000000000c0000000008201000005000200000010000140000084000000000000000100010400000080000040080100082000000000000000000004000021000800400802000000000501000000200000400000200020040010040000010105000000000040120000008000800200801000008004000000400004040000100000000000400000d005000020000008000004280010000000000000000000020010180100000140000000000020000000000000000008008000000000040000040100004001002c040000000000000"}
+	expectedLogsBloom := "0x006c008000a400481019089084800921420800043d410810114c20009821581102a20000810700812412a0005064008c02041840034452b11282120d80b6a1020a0050049c3020404800010a028012e0204d00008c4c150000788ba0c0808000a00422000222024040201c800810090000c000a024304591a1800819c0014058180201000880204228000000a29000824000080b0c16062c00000041558201802209108005020018080824907400031404040233a894030080d2605539204203c4304862000002080052101000abd414800010000008001e4049418248006082001031880022ac403002014062001806801004520998c2c2010228080a080001"
 
 	// test a direct jsonrpc call using EthCli
 	var res string
@@ -161,11 +181,11 @@ func TestJSONRPCCalls(t *testing.T) {
 	// test get block by Hash direct call
 	var response map[string]interface{}
 
-	err = c.Call("eth_getBlockByHash", []interface{}{"0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", true}, &response)
+	err = c.Call("eth_getBlockByHash", []interface{}{hash, true}, &response)
 	require.NoError(t, err)
 	require.NotNil(t, response, "eth_getBlockByHash: block not found")
-	require.Equal(t, expectedBlock[0], response["hash"])
-	require.Equal(t, expectedBlock[1], response["logsBloom"])
+	require.Equal(t, hash, response["hash"])
+	require.Equal(t, expectedLogsBloom, response["logsBloom"])
 }
 
 // TestGetGasAndGetLatestBlock tests the methods GasPrice and GetLatestBlock. This test is better run against the mock server
@@ -205,45 +225,31 @@ func TestBalance(t *testing.T) {
 	defer c.End()
 
 	mock = &[]interface{}{
-		// TestBalance acc[0]
-		"0xa1647084afb7c780", "0x00000000000000000000000000000000000000000000000002830a8a80588000",
-		// TestBalance acc[1]
-		"0x166c761c586733c0", "0x0000000000000000000000000000000000000000000000000a6c168562518000",
-		// TestBalance acc[2]
-		"0x7f97f7fed9f3ca5", "0x0000000000000000000000000000000000000000000000002a902c40161f8000",
+		"0x10a741a462780000", // balance of ether
+		"0x0000000000000000000000000000000000000000000000000000000000000000", // balance of token
 	}
 
 	var (
 		expected = []interface{}{
-			// TestBalance acc[0]
-			"0xa1647084afb7c780", "0x00000000000000000000000000000000000000000000000002830a8a80588000",
-			// TestBalance acc[1]
-			"0x166c761c586733c0", "0x0000000000000000000000000000000000000000000000000a6c168562518000",
-			// TestBalance acc[2]
-			"0x7f97f7fed9f3ca5", "0x0000000000000000000000000000000000000000000000002a902c40161f8000",
+			"0x10a741a462780000", // balance of ether
+			"0x0000000000000000000000000000000000000000000000000000000000000000", // balance of token
 		}
 
-		// Test balances: request the ether and ERC token balances for 3 addresses and compare to that of expected.
-		acc = []string{
-			"0xcba75F167B03e34B8a572c50273C082401b073Ed",
-			"0x357dd3856d856197c1a000bbAb4aBCB97Dfc92c4",
-			"0x1CD434711fBAe1f2d9C70001409Fd82d71fDCCAa",
-		}
+		// Test balances: request the ether and ERC token balances for address and compare to that of expected.
+		acc = "0x357dd3856d856197c1a000bbAb4aBCB97Dfc92c4" // account to test
+		tok = "0x5AB6F31B29Fc2021436B3Be57dE83Ead3286fdc7" // ERC20 token
 
-		tok            = "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f" // ERC20 token
 		ethExp, tokExp = new(big.Int), new(big.Int)
 	)
 
-	for i := 0; i < 3; i++ {
-		ethBal, tokBal, err := c.GetBalance(acc[i], tok)
-		require.NoError(t, err)
+	ethBal, tokBal, err := c.GetBalance(acc, tok)
+	require.NoError(t, err)
 
-		ethExp, _ = ethExp.SetString(expected[i*2].(string), 0)
-		require.Equal(t, ethExp, ethBal)
+	ethExp, _ = ethExp.SetString(expected[0].(string), 0)
+	require.Equal(t, ethExp, ethBal)
 
-		tokExp, _ = tokExp.SetString(expected[i*2+1].(string), 0)
-		require.Equal(t, tokExp, tokBal)
-	}
+	tokExp, _ = tokExp.SetString(expected[1].(string), 0)
+	require.Equal(t, tokExp, tokBal)
 }
 
 func TestNonceAndEstimageGas(t *testing.T) {
@@ -254,8 +260,8 @@ func TestNonceAndEstimageGas(t *testing.T) {
 
 	mock = &[]interface{}{
 		// test transaction count
-		"0x1c",
-		"0x1c",
+		"0x0",
+		"0x0",
 		// EstimateGas
 		"21000",
 		"21128",
@@ -265,8 +271,8 @@ func TestNonceAndEstimageGas(t *testing.T) {
 		acc      = "0x357dd3856d856197c1a000bbAb4aBCB97Dfc92c4"
 		expected = []interface{}{
 			// test transaction count
-			"0x1c",
-			"0x1c",
+			"0x0",
+			"0x0",
 			// EstimateGas
 			GasTransferEther,
 			uint64(21128),
@@ -304,22 +310,36 @@ func TestTransactions(t *testing.T) {
 
 	mock = &[]interface{}{
 		// GetTransactionByHash
-		map[string]interface{}{"blockHash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "blockNumber": "0x29bf9b", "from": "0x1cd434711fbae1f2d9c70001409fd82d71fdccaa", "gas": "0xff59", "gasPrice": "0x98bca5a00", "hash": "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60", "input": "0x", "nonce": "0x0", "r": "0xb506e6cf81364d01c126028ec0acb771ca372269c8b157e551238a1e2d1b7ecb", "s": "0x2d7ea699220630938f57fe05fa581abd5a21f3aa105668a7128fba49598bbd70", "to": "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f", "transactionIndex": "0x1", "v": "0x29", "value": "0x16345785d8a0000"},
+		map[string]interface{}{
+			"blockHash": "0xb20319b3d93034bafa8bfda3616691e3f1e347e1d2360733a321c26909270496", "blockNumber": "0x84552a",
+			"chainId": "0x5", "from": "0x1b7aa44088a0ea95bdc65fef6e5071e946bf7d8f", "gas": "0x5208", "gasPrice": "0x174876e800",
+			"hash": "0xe5a071e84c0278f0ae3466bc4d9559de17b633255b8f368bb99270424ff06866", "input": "0x", "nonce": "0x29f7a",
+			"to": "0xdd04e587427506ebbc67e0ae9f6d2c69c132b29a", "transactionIndex": "0x0", "type": "0x0", "v": "0x2d",
+			"value": "0x3782dace9d90000",
+		},
 		// GetTransactionReceipt
-		map[string]interface{}{"blockHash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "blockNumber": "0x29bf9b", "contractAddress": nil, "cumulativeGasUsed": "0x4fa3d", "from": "0x1cd434711fbae1f2d9c70001409fd82d71fdccaa", "gas": "0xff59", "gasPrice": "0x98bca5a00", "gasUsed": "0xf67f", "hash": "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60", "input": "0x", "logs": map[string]interface{}{"address": "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f", "blockHash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "blockNumber": "0x29bf9b", "data": "0x0000000000000000000000000000000000000000000000000de0b6b3a7640000", "logIndex": "0x2", "removed": false, "topics": []string{"0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef", "0x0000000000000000000000008bac1770a2826111c0e773f39827c1cfa031a21e", "0x0000000000000000000000001cd434711fbae1f2d9c70001409fd82d71fdccaa"}, "transactionHash": "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60", "transactionIndex": "0x1"}, "logsBloom": "0x00000000000000000000000000000000800000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000008000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000010000000020000000000000000000000000000000000000000000000002000000000000000000100000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000", "nonce": "0x0", "r": "0xb506e6cf81364d01c126028ec0acb771ca372269c8b157e551238a1e2d1b7ecb", "s": "0x2d7ea699220630938f57fe05fa581abd5a21f3aa105668a7128fba49598bbd70", "status": "0x1", "to": "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f", "transactionHash": "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60", "transactionIndex": "0x1", "v": "0x29", "value": "0x16345785d8a0000"},
+		map[string]interface{}{
+			"blockHash": "0xd44a255e40eee23bd90a54a792f7a35c175400958de22a9bbfe08a7b2c244ed6", "blockNumber": "0x29bf9b",
+			"contractAddress": nil, "cumulativeGasUsed": "0x4fa3d", "from": "0x1cd434711fbae1f2d9c70001409fd82d71fdccaa",
+			"gas": "0xff59", "gasPrice": "0x98bca5a00", "gasUsed": "0xf67f",
+			"hash": "0xe5a071e84c0278f0ae3466bc4d9559de17b633255b8f368bb99270424ff06866", "input": "0x",
+			"nonce": "0x0", "status": "0x1", "to": "0xa34de7bd2b4270c0b12d5fd7a0c219a4d68d732f",
+			"transactionHash":  "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60",
+			"transactionIndex": "0x1", "v": "0x29", "value": "0x16345785d8a0000",
+		},
 		map[string]interface{}(nil),
 	}
 
 	var (
 		expected = []interface{}{
 			// GetTransactionByHash
-			"0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60",
+			"0xe5a071e84c0278f0ae3466bc4d9559de17b633255b8f368bb99270424ff06866",
 			// GetTransactionReceipt
-			"0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60",
+			"0xe5a071e84c0278f0ae3466bc4d9559de17b633255b8f368bb99270424ff06866",
 			nil, // map[string]interface{}(nil),
 		}
 
-		hash     = "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf60"
+		hash     = "0xe5a071e84c0278f0ae3466bc4d9559de17b633255b8f368bb99270424ff06866"
 		response map[string]interface{}
 	)
 
@@ -335,7 +355,7 @@ func TestTransactions(t *testing.T) {
 	require.NotNil(t, response)
 	require.Equal(t, expected[1].(string), response["hash"])
 
-	hash = "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf61" // same as above except last digit changed!
+	hash = "0xdbd3184b2f947dab243071000df22cf5acc6efdce90a04aaf057521b1ee5bf61" // wrong hash
 
 	err = c.GetTransactionReceipt(hash, &response)
 	require.Error(t, err)

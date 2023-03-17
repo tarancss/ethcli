@@ -78,8 +78,8 @@ var (
 //nolint:gochecknoglobals // Refer to go-ethereum/params/config.go for this variables
 // Ropsten configuration variables used to generate transactions.
 var (
-	ropstenConfig *params.ChainConfig = params.RopstenChainConfig
-	ropstenBlock  *big.Int            = params.RopstenChainConfig.LondonBlock
+	goerliConfig *params.ChainConfig = params.GoerliChainConfig
+	goerliBlock  *big.Int            = params.GoerliChainConfig.BerlinBlock
 )
 
 // Trx is an ethereum transaction.
@@ -582,7 +582,7 @@ func signTrx(nonce uint64, to common.Address, amt *big.Int, gasLimit uint64, gas
 		return nil, nil, fmt.Errorf("ethcli error getting private key: %w", err)
 	}
 
-	signer := types.MakeSigner(ropstenConfig, ropstenBlock)
+	signer := types.MakeSigner(goerliConfig, goerliBlock)
 
 	// generate a transaction
 	tx := types.NewTransaction(nonce, to, amt, gasLimit, gasPrice, data)
